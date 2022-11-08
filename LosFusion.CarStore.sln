@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LosFusion.CarStore.ServiceLayer", "LosFusion.CarStore\LosFusion.CarStore.ServiceLayer.csproj", "{6AAC87B3-DCAD-441A-A491-BE094E2A54AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LosFusion.CarStore.BusinessLogicLayer", "LosFusion.CarStore.BusinessLogicLayer\LosFusion.CarStore.BusinessLogicLayer.csproj", "{866C01B3-B249-4D5F-8122-8FB281BDFC11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LosFusion.CarStore.DataAccessLayer", "LosFusion.CarStore.DataAccessLayer\LosFusion.CarStore.DataAccessLayer.csproj", "{94E591F0-36E1-4AEF-96A5-C96A8DF0284D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6AAC87B3-DCAD-441A-A491-BE094E2A54AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AAC87B3-DCAD-441A-A491-BE094E2A54AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AAC87B3-DCAD-441A-A491-BE094E2A54AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AAC87B3-DCAD-441A-A491-BE094E2A54AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{866C01B3-B249-4D5F-8122-8FB281BDFC11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{866C01B3-B249-4D5F-8122-8FB281BDFC11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{866C01B3-B249-4D5F-8122-8FB281BDFC11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{866C01B3-B249-4D5F-8122-8FB281BDFC11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94E591F0-36E1-4AEF-96A5-C96A8DF0284D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94E591F0-36E1-4AEF-96A5-C96A8DF0284D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94E591F0-36E1-4AEF-96A5-C96A8DF0284D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94E591F0-36E1-4AEF-96A5-C96A8DF0284D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1356C6A1-30AC-4EAF-A3E8-DDC06C576A72}
+	EndGlobalSection
+EndGlobal
