@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
+//using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using Microsoft.AspNetCore.Mvc;
 using LosFusion.CarStore.BusinessLogicLayer.Entities;
 using LosFusion.CarStore.BusinessLogicLayer.Interfaces;
@@ -44,6 +45,23 @@ namespace LosFusion.CarStore.ServiceLayer.Controller
         public async Task<CarEntity> Put(int id, [FromBody] CarEntity model)
         {
             return await _repo.UpdateAsync(id, model);
+        }
+
+        // PATCH api/<CarController>/5
+        [HttpPatch("{id:int}")]
+        public async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<CarEntity> patchEntity)
+        {
+            var entity = await _repo.GetAsync(id);
+
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            patchEntity.ApplyTo(entity, ModelState); // Must have Microsoft.AspNetCore.Mvc.NewtonsoftJson installed
+            await _repo.UpdateAsync(id, entity);
+
+            return Ok(entity);
         }
 
         // DELETE api/<CarController>/5

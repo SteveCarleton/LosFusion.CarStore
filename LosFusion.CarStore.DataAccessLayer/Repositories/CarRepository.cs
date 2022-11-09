@@ -18,6 +18,18 @@ namespace LosFusion.CarStore.DataAccessLayer.Repositories
             return await _context.Cars.ToListAsync();
         }
 
+        public async Task<CarEntity?> GetAsync(int id)
+        {
+            try
+            {
+                return await _context.Cars.FirstOrDefaultAsync(e => e.Id == id);
+            }
+            catch (Exception exc)
+            {
+                throw new ApplicationException($"Error getting Cars - Id: {id}", exc);
+            }
+        }
+
         public async Task<List<CarEntity>> GetByYearAsync(int year)
         {
             try
@@ -65,8 +77,9 @@ namespace LosFusion.CarStore.DataAccessLayer.Repositories
         {
             try
             {
-                var orig = _context.Cars.FirstOrDefaultAsync(e => e.Id == id);
+                var orig = await _context.Cars.FirstOrDefaultAsync(e => e.Id == id);
                 _context.Entry(orig).CurrentValues.SetValues(entity);
+                _context.Entry(entity).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
                 return entity;
             }

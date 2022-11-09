@@ -1,3 +1,7 @@
+// From LosFusion.CarStore.DataAccessLayer
+// Add-Migration InitialCreation
+// Update-Database
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using LosFusion.CarStore.DataAccessLayer;
@@ -13,20 +17,32 @@ namespace LosFusion.CarStore
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
             builder.Services.AddDbContext<CarDbContext>(options =>
                 options.UseSqlServer(connectionString));
+
             //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<CarDbContext>();
             //builder.Services.AddRazorPages();
 
-            //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
             builder.Services.AddControllers().AddNewtonsoftJson();
             builder.Services.AddScoped<ICarRepository, CarRepository>();
 
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
             var app = builder.Build();
+
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
 
             //// Configure the HTTP request pipeline.
             //if (app.Environment.IsDevelopment())
