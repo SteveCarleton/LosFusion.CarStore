@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LosFusion.CarStore.Business
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LosFusion.CarStore.DataAccessLayer", "LosFusion.CarStore.DataAccessLayer\LosFusion.CarStore.DataAccessLayer.csproj", "{94E591F0-36E1-4AEF-96A5-C96A8DF0284D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LosFusion.CarStore.ServiceLayer.IntegrationTest", "LosFusion.CarStore.ServiceLayer.IntegrationTest\LosFusion.CarStore.ServiceLayer.IntegrationTest.csproj", "{B618A6C9-ADC5-4DDB-ABCB-63079A00B703}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{94E591F0-36E1-4AEF-96A5-C96A8DF0284D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94E591F0-36E1-4AEF-96A5-C96A8DF0284D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94E591F0-36E1-4AEF-96A5-C96A8DF0284D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B618A6C9-ADC5-4DDB-ABCB-63079A00B703}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B618A6C9-ADC5-4DDB-ABCB-63079A00B703}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B618A6C9-ADC5-4DDB-ABCB-63079A00B703}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B618A6C9-ADC5-4DDB-ABCB-63079A00B703}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

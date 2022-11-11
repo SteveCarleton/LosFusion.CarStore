@@ -9,5 +9,5 @@ public interface ICarRepository
     Task<List<CarEntity>> GetAsync();
     Task<CarEntity?> GetAsync(int id);
     Task<List<CarEntity>> GetByYearAsync(int year);
-    Task<CarEntity> UpdateAsync(int id, CarEntity entity);
+    Task<CarEntity?> UpdateAsync(int id, CarEntity entity);
 }

@@ -15,14 +15,14 @@ namespace LosFusion.CarStore.DataAccessLayer.Repositories
 
         public async Task<List<CarEntity>> GetAsync()
         {
-            return await _context.Cars.ToListAsync();
+            return await _context.Cars!.ToListAsync();
         }
 
         public async Task<CarEntity?> GetAsync(int id)
         {
             try
             {
-                return await _context.Cars.FirstOrDefaultAsync(e => e.Id == id);
+                return await _context.Cars!.FirstOrDefaultAsync(e => e.Id == id);
             }
             catch (Exception exc)
             {
@@ -50,7 +50,7 @@ namespace LosFusion.CarStore.DataAccessLayer.Repositories
         {
             try
             {
-                _context.Cars.Add(entity);
+                _context.Cars!.Add(entity);
                 await _context.SaveChangesAsync();
                 return entity;
             }
@@ -73,15 +73,19 @@ namespace LosFusion.CarStore.DataAccessLayer.Repositories
         //        throw new ApplicationException($"Error updating Car - Model: {entity.Model}", exc);
         //    }
         //}
-        public async Task<CarEntity> UpdateAsync(int id, CarEntity entity)
+        public async Task<CarEntity?> UpdateAsync(int id, CarEntity entity)
         {
             try
             {
-                var orig = await _context.Cars.FirstOrDefaultAsync(e => e.Id == id);
-                _context.Entry(orig).CurrentValues.SetValues(entity);
-                _context.Entry(entity).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-                return entity;
+                CarEntity orig = await _context.Cars!.FirstOrDefaultAsync(e => e.Id == id);
+                if (orig != null)
+                {
+                    _context.Entry(orig).CurrentValues.SetValues(entity);
+                    _context.Entry(entity).State = EntityState.Modified;
+                    await _context.SaveChangesAsync();
+                    return entity;
+                }
+                return null;
             }
             catch (Exception exc)
             {
@@ -92,7 +96,7 @@ namespace LosFusion.CarStore.DataAccessLayer.Repositories
         public async Task DeleteAsync(int id)
         {
             var entity = new CarEntity { Id = id };
-            _context.Cars.Attach(entity);
+            _context.Cars!.Attach(entity);
             _context.Entry(entity).State = EntityState.Deleted;
             await _context.SaveChangesAsync();
         }

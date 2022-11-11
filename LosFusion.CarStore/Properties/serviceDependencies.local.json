@@ -3,6 +3,12 @@
     "mssql1": {
       "type": "mssql.local",
       "connectionId": "ConnectionStrings:DefaultConnection"
+    },
+    "identityapp1": {
+      "secretStore": null,
+      "resourceId": null,
+      "type": "identityapp.default",
+      "connectionId": null
     }
   }
 }
