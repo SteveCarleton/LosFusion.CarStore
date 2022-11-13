@@ -2,103 +2,89 @@
 using LosFusion.CarStore.BusinessLogicLayer.Entities;
 using LosFusion.CarStore.BusinessLogicLayer.Interfaces;
 
-namespace LosFusion.CarStore.DataAccessLayer.Repositories
+namespace LosFusion.CarStore.DataAccessLayer.Repositories;
+
+public class CarRepository : ICarRepository
 {
-    public class CarRepository : ICarRepository
+    readonly CarDbContext _context;
+
+    public CarRepository(CarDbContext context)
     {
-        readonly CarDbContext _context;
+        _context = context;
+    }
 
-        public CarRepository(CarDbContext context)
+    public async Task<List<CarEntity>> GetAsync()
+    {
+        return await _context.Cars!.ToListAsync();
+    }
+
+    public async Task<CarEntity?> GetAsync(int id)
+    {
+        try
         {
-            _context = context;
+            return await _context.Cars!.FirstOrDefaultAsync(e => e.Id == id);
         }
-
-        public async Task<List<CarEntity>> GetAsync()
+        catch (Exception exc)
         {
-            return await _context.Cars!.ToListAsync();
+            throw new ApplicationException($"Error getting Cars - Id: {id}", exc);
         }
+    }
 
-        public async Task<CarEntity?> GetAsync(int id)
+    public async Task<List<CarEntity>> GetByYearAsync(int year)
+    {
+        try
         {
-            try
-            {
-                return await _context.Cars!.FirstOrDefaultAsync(e => e.Id == id);
-            }
-            catch (Exception exc)
-            {
-                throw new ApplicationException($"Error getting Cars - Id: {id}", exc);
-            }
+            var query = from e in _context.Cars
+                         where e.Year == year
+                         select e;
+
+            return await query.ToListAsync();
         }
-
-        public async Task<List<CarEntity>> GetByYearAsync(int year)
+        catch (Exception exc)
         {
-            try
-            {
-                var query = from e in _context.Cars
-                             where e.Year == year
-                             select e;
-
-                return await query.ToListAsync();
-            }
-            catch (Exception exc)
-            {
-                throw new ApplicationException($"Error getting Cars - Year: {year}", exc);
-            }
+            throw new ApplicationException($"Error getting Cars - Year: {year}", exc);
         }
+    }
 
-        public async Task<CarEntity> AddAsync(CarEntity entity)
+    public async Task<CarEntity> AddAsync(CarEntity entity)
+    {
+        try
         {
-            try
+            _context.Cars!.Add(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+        catch (Exception exc)
+        {
+            throw new ApplicationException($"Error adding Car - Model: {entity.Model}", exc);
+        }
+    }
+
+    public async Task<CarEntity?> UpdateAsync(int id, CarEntity entity)
+    {
+        try
+        {
+            CarEntity? orig = await _context.Cars!.FirstOrDefaultAsync(e => e.Id == id);
+            if (orig != null)
             {
-                _context.Cars!.Add(entity);
+                _context.Entry(orig).CurrentValues.SetValues(entity);
+                _context.Entry(entity).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
                 return entity;
             }
-            catch (Exception exc)
-            {
-                throw new ApplicationException($"Error adding Car - Model: {entity.Model}", exc);
-            }
+            return null;
         }
-
-        //public async Task<CarEntity> UpdateAsync(CarEntity entity)
-        //{
-        //    try
-        //    {
-        //        _context.Entry(entity).State = EntityState.Modified;
-        //        await _context.SaveChangesAsync();
-        //        return entity;
-        //    }
-        //    catch (Exception exc)
-        //    {
-        //        throw new ApplicationException($"Error updating Car - Model: {entity.Model}", exc);
-        //    }
-        //}
-        public async Task<CarEntity?> UpdateAsync(int id, CarEntity entity)
+        catch (Exception exc)
         {
-            try
-            {
-                CarEntity orig = await _context.Cars!.FirstOrDefaultAsync(e => e.Id == id);
-                if (orig != null)
-                {
-                    _context.Entry(orig).CurrentValues.SetValues(entity);
-                    _context.Entry(entity).State = EntityState.Modified;
-                    await _context.SaveChangesAsync();
-                    return entity;
-                }
-                return null;
-            }
-            catch (Exception exc)
-            {
-                throw new ApplicationException($"Error updating Car - Model: {entity.Model}", exc);
-            }
+            throw new ApplicationException($"Error updating Car - Id: {entity.Id}", exc);
         }
+    }
 
-        public async Task DeleteAsync(int id)
-        {
-            var entity = new CarEntity { Id = id };
-            _context.Cars!.Attach(entity);
-            _context.Entry(entity).State = EntityState.Deleted;
-            await _context.SaveChangesAsync();
-        }
+    public async Task DeleteAsync(int id)
+    {
+        var entity = new CarEntity { Id = id };
+        _context.Cars!.Attach(entity);
+        _context.Entry(entity).State = EntityState.Deleted;
+        await _context.SaveChangesAsync();
     }
 }

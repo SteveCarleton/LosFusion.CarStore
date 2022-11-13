@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Text;
-using System.Net.Http;
 //using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using System.Text.Json;
 
 namespace LosFusion.CarStore.ServiceLayer.IntegrationTest;
@@ -12,9 +8,9 @@ namespace LosFusion.CarStore.ServiceLayer.IntegrationTest;
 public class TestWebHelpers
 {
     const string baseAddress = "http://localhost:5038";
-    //PasswordAuthToken authToken;
-    Type testInterfaceType;
-    Type testMockType;
+    readonly PasswordAuthToken? authToken;
+    readonly Type testInterfaceType = default!;
+    readonly Type testMockType = default!;
 
     JsonSerializerOptions jsonSerializationOptions = new JsonSerializerOptions()
     {
@@ -24,14 +20,14 @@ public class TestWebHelpers
 
     public TestWebHelpers()
     {
-        //authToken ??= PasswordAuthToken.Setup();
+        authToken ??= PasswordAuthToken.Setup();
     }
 
     public TestWebHelpers(Type interfaceType, Type mockType)
     {
         testInterfaceType = interfaceType;
         testMockType = mockType;
-        //authToken ??= PasswordAuthToken.Setup();
+        authToken ??= PasswordAuthToken.Setup();
     }
 
 
@@ -71,7 +67,7 @@ public class TestWebHelpers
             //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken.id_token);
             httpClient.BaseAddress = new Uri(baseAddress);
 
-            var response = await httpClient.GetAsync($"{route}/{year}");
+            var response = await httpClient.GetAsync($"{route}/GetByYear/{year}");
             response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             return content;
@@ -119,10 +115,7 @@ public class TestWebHelpers
 
             //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken.id_token);
             httpClient.BaseAddress = new Uri(baseAddress);
-
-            //var requestContent = new StringContent(SerializeObject(payload), Encoding.UTF8, "application/json");
             string json = JsonSerializer.Serialize(payload, jsonSerializationOptions);
-
             var requestContent = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await httpClient.PutAsync($"{route}/{id}", requestContent);
@@ -147,9 +140,7 @@ public class TestWebHelpers
             //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken.id_token);
             httpClient.BaseAddress = new Uri(baseAddress);
 
-            //var requestContent = new StringContent(SerializeObject(payload), Encoding.UTF8, "application/json");
             //string json = JsonSerializer.Serialize(payload, jsonSerializationOptions);
-
             //var requestContent = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await httpClient.PatchAsync($"{route}/{id}", requestContent);
@@ -181,4 +172,3 @@ public class TestWebHelpers
         }
     }
 }
-

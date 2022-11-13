@@ -1,32 +1,20 @@
 ﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.IO;
 using System.Net;
-using System.Net.Http;
 using System.Security.Claims;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Text.Encodings.Web;
 using Moq;
 using Moq.Protected;
-using FizzWare.NBuilder;
 
 namespace LosFusion.CarStore.ServiceLayer.IntegrationTest;
+
 public class TestWebApplicationFactory : WebApplicationFactory<Startup>
 {
     const string baseAddress = "http://localhost:5000";
-    //PasswordAuthToken authToken;
 
     public TestWebApplicationFactory()
     {
-        //authToken ??= PasswordAuthToken.Setup();
     }
 
     protected override IHostBuilder CreateHostBuilder()
@@ -98,7 +86,6 @@ public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions
     }
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
-    //protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         var claims = new[]
         {
@@ -111,6 +98,5 @@ public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions
         var result = AuthenticateResult.Success(ticket);
 
         return Task.FromResult(result);
-        //return result;
     }
 }

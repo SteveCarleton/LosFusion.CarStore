@@ -25,9 +25,9 @@ public class CarController : ControllerBase
         return await _repo.GetAsync();
     }
 
-    // GET api/<CarController>/5
-    [HttpGet("{year}")]
-    public async Task<IEnumerable<CarEntity>> Get(int year)
+    // GET api/<CarController>/GetByYear/<year>
+    [HttpGet("[action]/{year}")]
+    public async Task<IEnumerable<CarEntity>> GetByYear(int year)
     {
         return await _repo.GetByYearAsync(year);
     }
@@ -65,8 +65,9 @@ public class CarController : ControllerBase
 
     // DELETE api/<CarController>/5
     [HttpDelete("{id}")]
-    public async Task Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
         await _repo.DeleteAsync(id);
+        return Ok(id);
     }
 }

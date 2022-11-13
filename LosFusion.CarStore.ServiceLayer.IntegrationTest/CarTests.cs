@@ -1,28 +1,27 @@
+using System.Text;
 using System.Text.Json;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Xunit.Abstractions;
 using LosFusion.CarStore.BusinessLogicLayer.Entities;
 using LosFusion.CarStore.BusinessLogicLayer.Interfaces;
-using Microsoft.AspNetCore.JsonPatch;
-using System.Text;
+//using Microsoft.AspNetCore.JsonPatch;
 
 namespace LosFusion.CarStore.ServiceLayer.IntegrationTest;
 
 public class CarTestValues
 {
-    public static int carId = 1;
-    public static int carCount = 2;
-    public static int year = 2022;
-    public static string model = "Sport";
-    public static string modelChange = "Luxury";
+    public static readonly int carId = 1;
+    public static readonly int carCount = 2;
+    public static readonly int year = 2022;
+    public static readonly Colors color = Colors.Blue;
+    public static readonly string model = "Sport";
+    public static readonly string modelChange = "Luxury";
 };
 
 public class CarIntegrationTest : IClassFixture<TestWebApplicationFactory>
 {
     const string route = "api/car";
-    //int carId = 1;
-    //int year = 2022;
     TestWebHelpers testWebHelpers;
     JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions()
     {
@@ -39,10 +38,8 @@ public class CarIntegrationTest : IClassFixture<TestWebApplicationFactory>
     {
         var content = await testWebHelpers.GetTestHelper(route);
         content.Should().NotBeNull();
-        //var data = JsonSerializer.Deserialize<CarEntity>(content);
         var data = JsonSerializer.Deserialize<List<CarEntity>>(content);
         data.Should().NotBeNull();
-        //data.Success.Should().BeTrue();
         data?.Count.Should().Be(CarTestValues.carCount);
     }
 
@@ -51,10 +48,8 @@ public class CarIntegrationTest : IClassFixture<TestWebApplicationFactory>
     {
         var content = await testWebHelpers.GetByYearTestHelper(route, CarTestValues.year);
         content.Should().NotBeNull();
-        //var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var data = JsonSerializer.Deserialize<List<CarEntity>>(content, jsonSerializerOptions);
         data.Should().NotBeNull();
-        //data.Success.Should().BeTrue();
         data?.Count.Should().Be(CarTestValues.carCount);
         data?[0].Year.Should().Be(CarTestValues.year);
         data?[1].Year.Should().Be(CarTestValues.year);
@@ -66,10 +61,12 @@ public class CarIntegrationTest : IClassFixture<TestWebApplicationFactory>
         var car = GenerateCar();
         var content = await testWebHelpers.PostTestHelper(route, car);
         content.Should().NotBeNull();
-        var data = JsonSerializer.Deserialize<CarEntity>(content);
+        var data = JsonSerializer.Deserialize<CarEntity>(content, jsonSerializerOptions);
         data.Should().NotBeNull();
-        //data.Success.Should().BeTrue();
         data?.Id.Should().Be(CarTestValues.carId);
+        data?.Year.Should().Be(CarTestValues.year);
+        data?.Color.Should().Be(CarTestValues.color);
+        data?.Model.Should().Be(CarTestValues.model);
     }
 
     [Fact]
@@ -78,10 +75,12 @@ public class CarIntegrationTest : IClassFixture<TestWebApplicationFactory>
         var car = GenerateCar();
         var content = await testWebHelpers.PutTestHelper(route, CarTestValues.carId, car);
         content.Should().NotBeNull();
-        var data = JsonSerializer.Deserialize<CarEntity>(content);
+        var data = JsonSerializer.Deserialize<CarEntity>(content, jsonSerializerOptions);
         data.Should().NotBeNull();
-        //data.Success.Should().BeTrue();
         data?.Id.Should().Be(CarTestValues.carId);
+        data?.Year.Should().Be(CarTestValues.year);
+        data?.Color.Should().Be(CarTestValues.color);
+        data?.Model.Should().Be(CarTestValues.modelChange);
     }
 
     [Fact]
@@ -91,8 +90,6 @@ public class CarIntegrationTest : IClassFixture<TestWebApplicationFactory>
         //var patch = new JsonPatchDocument<CarEntity>();
         //patch.Replace(e => e.Model, "Luxury");
         //string json = JsonSerializer.Serialize(patch);
-        
-        //string json = "[{\"op\":\"replace\", \"path\":\"/Model\",\"value\":\"Luxury\" }]";
         string json = $"[{{\"op\":\"replace\", \"path\":\"/Model\",\"value\":\"{CarTestValues.modelChange}\"}}]";
 
         var requestContent = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
@@ -100,7 +97,6 @@ public class CarIntegrationTest : IClassFixture<TestWebApplicationFactory>
         content.Should().NotBeNull();
         var data = JsonSerializer.Deserialize<CarEntity>(content, jsonSerializerOptions);
         data.Should().NotBeNull();
-        //data.Success.Should().BeTrue();
         data?.Model.Should().Be(CarTestValues.modelChange);
     }
 
@@ -109,16 +105,19 @@ public class CarIntegrationTest : IClassFixture<TestWebApplicationFactory>
     {
         var content = await testWebHelpers.DeleteTestHelper<string>(route, CarTestValues.carId);
         content.Should().NotBeNull();
-        //var data = JsonSerializer.Deserialize<ApiResponse>(content);
-        //data.Should().NotBeNull();
-        //data.Success.Should().BeTrue();
+        var data = JsonSerializer.Deserialize<int>(content);
+        data.Should().Be(1);
     }
 
     CarEntity GenerateCar()
     {
-        return Builder<CarEntity>
-            .CreateNew()
-            .Build();
+        return new CarEntity
+        {
+            Id = CarTestValues.carId,
+            Model = CarTestValues.model,
+            Year = CarTestValues.year,
+            Color = CarTestValues.color
+        };
     }
 }
 
@@ -132,7 +131,7 @@ public class CarRepositoryMock : ICarRepository
 
     public Task DeleteAsync(int id)
     {
-        return Task.FromResult(0);
+        return Task.FromResult(id);
     }
 
     public Task<CarEntity?> GetAsync(int id)
@@ -146,14 +145,17 @@ public class CarRepositoryMock : ICarRepository
             .CreateListOfSize(CarTestValues.carCount)
             .All()
             .With(c => c.Year = year)
-            .And(c => c.Model = "Sport")
+            .And(c => c.Model = CarTestValues.model)
             .Build()
             .ToList());
     }
 
     public Task<List<CarEntity>> GetAsync()
     {
-        return Task.FromResult(Builder<CarEntity>.CreateListOfSize(CarTestValues.carCount).Build().ToList());
+        return Task.FromResult(Builder<CarEntity>
+            .CreateListOfSize(CarTestValues.carCount)
+            .Build()
+            .ToList());
     }
 
     public Task<CarEntity?> UpdateAsync(int id, CarEntity item)
@@ -161,7 +163,9 @@ public class CarRepositoryMock : ICarRepository
         return Task.FromResult(Builder<CarEntity?>
             .CreateNew()
             .With(c => c!.Id = id)
-            .And(c => c!.Model = "Luxury")
+            .And(c => c!.Year = item.Year)
+            .And(c => c!.Color = item.Color)
+            .And(c => c!.Model = CarTestValues.modelChange)
             .Build());
     }
 }
